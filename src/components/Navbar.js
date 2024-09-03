@@ -1,7 +1,7 @@
 "use client";
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -9,7 +9,7 @@ const Navbar = () => {
 
   useEffect(() => {
     // Check if the token is present in localStorage
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       setIsAuthenticated(true);
     }
@@ -17,22 +17,26 @@ const Navbar = () => {
 
   const handleSignOut = () => {
     // Remove the token from localStorage
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setIsAuthenticated(false);
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
-    <div className='bg-black h-[10vh] w-[95%] text-white flex flex-row justify-between items-center m-[2%] rounded-lg'>
-      <div className='mx-9'>
+    <div className="bg-black h-[10vh] w-[95%] text-white flex flex-row justify-between items-center m-[2%] rounded-lg">
+      <div className="mx-9">
         <Link href="/">REDACT</Link>
       </div>
-      <div className='mx-9'>
-        <Link href="/mask" className='mx-9'>Mask</Link>
-        <span className='mx-9'>Demask</span>
-        <span className='mx-9'>Validate</span>
+      <div className="mx-9">
+        <Link href="/mask" className="mx-9">
+          Mask
+        </Link>
+        <span className="mx-9">Demask</span>
+        <Link href="/validate" className="mx-9">
+          Validate
+        </Link>
       </div>
-      <span className='mx-9'>
+      <span className="mx-9">
         {isAuthenticated ? (
           <button onClick={handleSignOut}>Sign Out</button>
         ) : (
@@ -41,6 +45,6 @@ const Navbar = () => {
       </span>
     </div>
   );
-}
+};
 
 export default Navbar;
