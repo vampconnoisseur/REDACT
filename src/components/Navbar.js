@@ -28,11 +28,11 @@ const Navbar = () => {
         <Link href="/">REDACT</Link>
       </div>
       <div className="mx-9">
-        <Link href="/mask" className="mx-9">
+        <Link href="/mask" className="text-black transition duration-300 dark:text-gray-300 hover:text-gray-300">
           Mask
         </Link>
         <span className="mx-9">Demask</span>
-        <Link href="/validate" className="mx-9">
+        <Link href="/validate" className="text-black transition duration-300 dark:text-gray-300 hover:text-gray-300">
           Validate
         </Link>
       </div>

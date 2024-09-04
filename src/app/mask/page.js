@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
+import Header from '@/components/Header';
 
 const Page = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,7 +27,8 @@ const Page = () => {
     }
   }, [router]);
 
-  return (
+  return (<>
+    <Header />
     <div>
       {isAuthenticated ? (
         <FileUploadAndProcess /> // Display the component if authenticated
@@ -35,6 +37,7 @@ const Page = () => {
       )}
       <ToastContainer />
     </div>
+  </>
   );
 };
 
