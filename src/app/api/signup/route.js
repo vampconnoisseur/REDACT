@@ -30,14 +30,14 @@ export async function POST(req) {
     function createToken(username) {
       const secret = process.env.NEXT_PUBLIC_SALT; // Ensure this is set in your environment
       const hash = crypto.createHmac('sha256', secret)
-                         .update("\""+username+"\"")
-                         .digest('hex');
+        .update("\"" + username + "\"")
+        .digest('hex');
 
-      console.log("main->>",username)
+      console.log("main->>", username)
       return hash;
     }
-    const token =createToken(username)
-    console.log(username,token)
+    const token = createToken(username)
+    console.log(username, token)
     // Respond with token and username
     return NextResponse.json({ token, username });
   } catch (error) {

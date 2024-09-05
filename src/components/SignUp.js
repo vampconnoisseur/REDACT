@@ -9,7 +9,7 @@ function useLocalStorage(key, initialValue) {
   // Initialize state with localStorage value or fallback to initialValue
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key) ||null;
+      const item = window.localStorage.getItem(key) || null;
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.log(error);
@@ -37,19 +37,33 @@ const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useLocalStorage("token", null); 
-  const [name,setName]=useLocalStorage("username",null)
+  const [token, setToken] = useLocalStorage("token", null);
+  const [name, setName] = useLocalStorage("username", null)
   // Use the custom hook for token
   const router = useRouter();
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(localStorage.getItem("token"))
-  },[token,setToken])
+  }, [token, setToken])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      const historyResponse = await fetch("/api/addhistory", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email }),
+      });
+
+      const historyData = await historyResponse.json();
+
+      if (!historyResponse.ok) {
+        throw new Error(historyData.error || "Failed to create user history.");
+      }
+
       const response = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,7 +74,7 @@ const Signup = () => {
       console.log("API response:", data); // Log the API response
 
       if (response.ok) {
-        console.log(data.username,data.token)
+        console.log(data.username, data.token)
         setName(data.username);
         setToken(data.token); // Update the token using the custom hook
         toast.success(`Welcome, ${data.username}!`);

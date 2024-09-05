@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from 'next/navigation';
+import { verifyToken, verifyTokenLogin } from '@/lib/jwt';
 
 const FileUploadAndProcess = () => {
   const [fileType, setFileType] = useState("");
@@ -12,6 +14,27 @@ const FileUploadAndProcess = () => {
   const [selectedFields, setSelectedFields] = useState([]);
   const [maskingLevel, setMaskingLevel] = useState(1);
   const [processedLink, setProcessedLink] = useState("");
+  const [username, setUsername] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    console.log(token);
+    if (!token) {
+      toast.error('You must be logged in to access this page.');
+      return;
+    }
+
+    const user = verifyToken(token, username) || verifyTokenLogin(token, username);
+    console.log(user);
+    if (user) {
+      console.log("User verified");
+      setUsername(username?.trim());
+    } else {
+      toast.error('Invalid token. Please log in again.');
+    }
+  }, [router]);
 
   const handleFileTypeChange = (e) => {
     setFileType(e.target.value);
@@ -123,8 +146,13 @@ const FileUploadAndProcess = () => {
       return;
     }
 
+    const trimmedUsername = username.trim();
+
+    console.log('Username before API call:', trimmedUsername);
+
     try {
-      const response = await fetch("/api/testMask", {
+      // Call the mask processing API
+      const maskResponse = await fetch("/api/testMask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,16 +165,34 @@ const FileUploadAndProcess = () => {
         }),
       });
 
-      if (!response.ok) {
+      if (!maskResponse.ok) {
         throw new Error("Error processing file.");
       }
 
-      const { processedLink } = await response.json();
+      const { processedLink } = await maskResponse.json();
       setProcessedLink(processedLink);
       toast.success("File processed successfully!");
+
+      // Call the updateMetrics API to increase masks attribute by one
+      const metricsResponse = await fetch("/api/updateMetrics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          incrementMask: 1,
+          username: trimmedUsername
+        }),
+      });
+
+      if (!metricsResponse.ok) {
+        throw new Error("Error updating mask metrics.");
+      }
+
+      toast.success("Mask metrics updated successfully!");
     } catch (error) {
-      console.error("Error processing file:", error);
-      toast.error("Error processing file.");
+      console.error("Error processing file or updating metrics:", error);
+      toast.error("Error processing file or updating mask metrics.");
     }
   };
 
@@ -300,11 +346,10 @@ const FileUploadAndProcess = () => {
 
       <button
         onClick={handleNext}
-        className={`w-full px-6 py-2 text-white font-semibold rounded-lg transition-colors ${
-          selectedFields.length > 0
-            ? "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            : "bg-gray-400 cursor-not-allowed"
-        }`}
+        className={`w-full px-6 py-2 text-white font-semibold rounded-lg transition-colors ${selectedFields.length > 0
+          ? "bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          : "bg-gray-400 cursor-not-allowed"
+          }`}
         disabled={selectedFields.length === 0}
       >
         Next Step

@@ -1,4 +1,4 @@
-import DashboardProfile from "@/app/dashboardprofile/page";
+import Profile from "@/app/profile/page";
 import DefaultLayout from "@/components/DefaultLayout";
 import React from "react";
 
@@ -11,7 +11,7 @@ export const metadata = {
 export default function Dashboard() {
   return (
     <>
-      <DashboardProfile />
+      <Profile />
     </>
   );
 }

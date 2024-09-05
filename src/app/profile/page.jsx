@@ -8,7 +8,7 @@ import { verifyToken, verifyTokenLogin } from '@/lib/jwt';
 import Dashboard from '@/components/Dashboard';
 import DefaultLayout from '@/components/DefaultLayout';
 
-const DashboardProfile = () => {
+const Profile = () => {
     const [username, setUsername] = useState('');
     const router = useRouter();
 
@@ -50,4 +50,4 @@ const DashboardProfile = () => {
     );
 };
 
-export default DashboardProfile;
+export default Profile;
